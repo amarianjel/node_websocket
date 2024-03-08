@@ -19,6 +19,7 @@
 
 
     <script>
+        let socket = null;
         const form = document.querySelector('form');
         const input = document.querySelector('input');
         const ulListElements = document.querySelector('#message');
@@ -26,27 +27,26 @@
 
         console.log("Hola desde el Front")
         
+        function sendMessage(message) {
+            //console.log({message});
+            socket?.send(message);
+        }
+        
+        function renderMessage(message) {
+            const li = document.createElement("li");
+            li.innerHTML = message;
+            ulListElements.prepend(li);
+        }
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const message = input.value;
+            sendMessage(message);
+        })
 
         function connetToServer() {
 
             const socket = new WebSocket("ws://localhost:3000")
-
-            function sendMessage(message) {
-                //console.log({message});
-                socket.send(message);
-            }
-
-            function renderMessage(message) {
-                const li = document.createElement("li");
-                li.innerHTML = message;
-                ulListElements.prepend(li);
-            }
-
-            form.addEventListener('submit', (event) => {
-                event.preventDefault();
-                const message = input.value;
-                sendMessage(message);
-            })
 
             socket.onopen = (event) => {
                 console.log('Connection established');
@@ -66,8 +66,8 @@
                 renderMessage( payload );
             }
         }
-
         connetToServer()
+        
     </script>
 </body>
 </html>
